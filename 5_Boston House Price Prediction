@@ -1,0 +1,49 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Load dataset (IMPORTANT: use CSV since load_boston is removed)
+df = pd.read_csv("1_boston_housing.csv")
+
+# Split data
+X = df.drop('MEDV', axis=1)
+y = df['MEDV']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=123
+)
+
+# Scaling
+scaler = MinMaxScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Model
+model = Sequential()
+model.add(Dense(128, activation='relu', input_shape=(13,)))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(1, activation='linear'))
+
+model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+
+model.summary()
+
+
+
+# Train
+model.fit(X_train, y_train, epochs=100, validation_split=0.05)
+
+# Evaluate
+mse, mae = model.evaluate(X_test, y_test)
+
+print("MSE on test data:", mse)
+print("MAE on test data:", mae)
+
+
+
+
+OUTPUT
+MSE: ~25.9
+MAE: ~3.8
