@@ -1,0 +1,45 @@
+from tensorflow.keras.datasets import imdb
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+import numpy as np
+
+# Load dataset
+(train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=10000)
+
+# Vectorize
+def vectorize(sequences, dim=10000):
+    results = np.zeros((len(sequences), dim))
+    for i, seq in enumerate(sequences):
+        results[i, seq] = 1
+    return results
+
+x_train = vectorize(train_data)
+x_test = vectorize(test_data)
+
+y_train = np.asarray(train_labels).astype('float32')
+y_test = np.asarray(test_labels).astype('float32')
+
+# Model
+model = Sequential()
+model.add(Dense(16, activation='relu', input_shape=(10000,)))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train
+model.fit(x_train, y_train, epochs=20, batch_size=512, validation_split=0.3)
+
+# Evaluate
+loss, acc = model.evaluate(x_test, y_test)
+print("Accuracy:", acc)
+
+
+
+
+Input
+Dataset auto-downloaded from TensorFlow 2_IMBD
+
+
+OUTPUT
+Accuracy: ~0.86
