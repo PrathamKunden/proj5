@@ -1,0 +1,77 @@
+#include <iostream>
+#include <omp.h>
+
+using namespace std;
+
+int findMin(int arr[], int n) {
+    int minimum = arr[0];
+
+    #pragma omp parallel for reduction(min: minimum)
+    for (int i = 0; i < n; i++) {
+        if (arr[i] < minimum) {
+            minimum = arr[i];
+        }
+    }
+
+    return minimum;
+}
+
+int findMax(int arr[], int n) {
+    int maximum = arr[0];
+
+    #pragma omp parallel for reduction(max: maximum)
+    for (int i = 0; i < n; i++) {
+        if (arr[i] > maximum) {
+            maximum = arr[i];
+        }
+    }
+
+    return maximum;
+}
+
+int findSum(int arr[], int n) {
+    int total = 0;
+
+    #pragma omp parallel for reduction(+: total)
+    for (int i = 0; i < n; i++) {
+        total += arr[i];
+    }
+
+    return total;
+}
+
+double findAverage(int arr[], int n) {
+    return static_cast<double>(findSum(arr, n)) / n;
+}
+
+int main() {
+    int n;
+
+    cout << "Enter number of elements: ";
+    cin >> n;
+
+    int arr[n];
+
+    cout << "Enter elements: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    cout << "Minimum value : " << findMin(arr, n) << endl;
+    cout << "Maximum value : " << findMax(arr, n) << endl;
+    cout << "Sum           : " << findSum(arr, n) << endl;
+    cout << "Average       : " << findAverage(arr, n) << endl;
+
+    return 0;
+}
+
+
+
+Enter number of elements: 5
+Enter elements: 10 4 7 2 9
+
+
+Minimum value : 2
+Maximum value : 10
+Sum           : 32
+Average       : 6.4
