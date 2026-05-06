@@ -1,0 +1,75 @@
+from tensorflow.keras.datasets import fashion_mnist
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
+import numpy as np
+
+# Load data
+(train_x, train_y), (test_x, test_y) = fashion_mnist.load_data()
+
+# Normalize + reshape
+train_x = train_x.reshape(-1,28,28,1) / 255.0
+test_x = test_x.reshape(-1,28,28,1) / 255.0
+
+# Model
+model = Sequential()
+model.add(Conv2D(64,(3,3),activation='relu',input_shape=(28,28,1)))
+model.add(MaxPooling2D((2,2)))
+model.add(Flatten())
+model.add(Dense(128,activation='relu'))
+model.add(Dense(10,activation='softmax'))
+
+model.summary()
+
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Train
+model.fit(train_x, train_y, epochs=5, validation_split=0.2)
+
+# Evaluate
+loss, acc = model.evaluate(test_x, test_y)
+print("Accuracy:", acc)
+
+
+#---------------------------------------------
+labels = [ 't_shirt' , 'trouser' , 'pullover' , 'dress' , 'coat' , 'sandal' , 'shirt' , 'sneaker' , 'bag' , 'ankle_boots' ]
+
+predictions = model.predict(test_x[: 1 ])
+
+label = labels[np.argmax(predictions)]
+
+import matplotlib.pyplot as plt
+print(label)
+plt.imshow(test_x[:1][0])
+plt.show
+
+#---------------------------------------------
+Input
+Auto dataset download
+
+OUTPUT
+Accuracy: ~0.81
+
+RUNNING
+W:
+# Install Python (if not installed)
+pip install tensorflow scikit-learn pandas matplotlib
+
+# Run file
+python boston.py
+python imdb.py
+python letter.py
+python fashion.py
+
+U:
+sudo apt update
+sudo apt install python3-pip -y
+
+pip3 install tensorflow scikit-learn pandas matplotlib
+
+# Run
+python3 boston.py
+python3 imdb.py
+python3 letter.py
+python3 fashion.py
